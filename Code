@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#define SLEN 16
+
+struct month{
+	char name[SLEN];
+	char abb[SLEN];
+	char index[3];
+	int day;
+};
+
+struct month months[12] = 
+{
+	{"January", "Jan", "1", 31},
+	{"February", "Feb", "2", 28},
+	{"March", "Mar", "3", 31},
+	{"April", "Apr", "4", 30},
+	{"May", "May", "5", 31},
+	{"June", "Jun", "6", 30},
+	{"July", "Jul", "7", 31},
+	{"August", "Aug", "8", 31},
+	{"September", "Sep", "9", 30},
+	{"October", "Oct", "10", 31},
+	{"November", "Nov", "11", 30},
+	{"December", "Dec", "12", 31}
+};
+
+void is_leap_year(int year);
+int days_result(int day, char *month);
+
+int main(void) {
+	int day, year;
+	char mon[SLEN];
+	int total_days;
+	
+	puts("Please enter day, month, and year: (q to quit)");
+	while (scanf("%d" "%s" "%d", &day, mon, &year) == 3) {
+		is_leap_year(year);
+		total_days = days_result(day, mon);
+		if (total_days > 0) {
+			printf("There are %d days from the beginning of %d to %s/%d.\n", total_days, year, mon, day);
+		}
+		else {
+			printf("Invalid input.\n");
+		}
+		months[1].day = 28;
+		printf("Next day, month, and year: (q to quit)\n");
+	}
+	puts("Done.");
+	
+	return 0;
+}
+
+void is_leap_year(int year) {
+	if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0)
+		months[1].day = 29;
+}
+
+int days_result(int day, char *mon) {
+	int i = 1, res = 0;
+	
+	mon[0] = toupper(mon[0]);
+	while (mon[i] != '\0') {
+		mon[i] = tolower(mon[i]);
+		i++;
+	}
+	
+	for (i=0; i<12; i++) {
+		if (strcmp(mon, months[i].name)==0 || strcmp(mon, months[i].abb)==0 || strcmp(mon, months[i].index)==0) {
+			if (day > months[i].day) {
+				return -1;
+			}
+			else {
+				return res + day;
+			}
+		}
+		res += months[i].day;
+	}
+	return -1;
+}
